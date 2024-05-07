@@ -10,6 +10,7 @@ public class EventPanel : MonoBehaviour
     public void OpanEventPanel()
     {
         eventPanel.SetActive(true);
+        this.GetComponent<TypingText>().PrintDialogue();
     }
 
     public void CloseEventPanel()

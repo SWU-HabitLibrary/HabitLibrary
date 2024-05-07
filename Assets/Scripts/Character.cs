@@ -12,7 +12,7 @@ public class Character
     public int mp;
     public int stress;
     public int intelligence;
-    public int gold;
+    public int gold { get; set; }
 
     public Character()
     {
@@ -23,8 +23,8 @@ public class Character
 
     public Character(string _name, string _sex)
     {
-        name = _name;
-        sex = _sex;
+        this.name = _name;
+        this.sex = _sex;
         hp = mp = stress = intelligence = 10;
         gold = 1000;
     }

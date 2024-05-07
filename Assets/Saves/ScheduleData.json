@@ -4,21 +4,21 @@
     "dataList": [
         {
             "id": 202404171320,
-            "content": "nnn",
+            "content": "방 청소하기",
             "date": "20240417",
             "time": "1320",
-            "isCompleted": false
+            "isCompleted": true
         },
         {
             "id": 202404171321,
-            "content": "저장 테스트",
+            "content": "시험 공부하기",
             "date": "20240417",
             "time": "1321",
             "isCompleted": false
         },
         {
             "id": 202404171540,
-            "content": "시험공부",
+            "content": "책 반납하기",
             "date": "20240417",
             "time": "1540",
             "isCompleted": false

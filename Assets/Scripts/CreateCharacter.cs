@@ -13,11 +13,13 @@ public class CreateCharacter : MonoBehaviour
     public GameObject Panel_CreateCharacter;    // 캐릭터 생성 패널
     public InputField InputCharacterName;   // 캐릭터 이름 입력창
     public GameObject[] CharacterSex;   // 선택 가능한 캐릭터 배열
-    int curCharacterSex;    // 현재 선택값
+
+    private int curCharacterSex = 0;    // 현재 선택값
+    private SceneChange sceneChanger;   // 씬 전환 스크립트
 
     private void Start()
     {
-        curCharacterSex = 0;
+        sceneChanger = GameManager.instance.sceneChanger;
         ViewCharacterSelect(curCharacterSex);
     }
 
@@ -25,15 +27,12 @@ public class CreateCharacter : MonoBehaviour
     {
         // 캐릭터 선택 버튼을 클릭
 
-        // 입력한 캐릭터 이름
-        string name = InputCharacterName.text;
-        Debug.Log("캐릭터 이름 : " + name);
-        // 선택한 캐릭터 성별
-        string sex = CharacterSex[curCharacterSex].GetComponent<Text>().text;
-        Debug.Log("캐릭터 성별 : " + sex);
-        Character newCharacter = new Character(InputCharacterName.text, sex);
+        string name = InputCharacterName.text;  // 입력한 캐릭터 이름
+        string sex = CharacterSex[curCharacterSex].GetComponent<Text>().text;   // 선택한 캐릭터 성별
+        Character newCharacter = new Character(name, sex);  // 캐릭터 생성
+
         GameManager.instance.playerCharacter = newCharacter; 
-        GameManager.instance.GetComponent<CharacterStateJSON>().SaveToJson(newCharacter);
+        GameManager.instance.GetComponent<CharacterStateJSON>().SaveToJson(newCharacter);   // ** 이 부분 JSON Manager 만들어서 변경
 
         SceneManager.LoadScene("Main");
     }
@@ -81,7 +80,7 @@ public class CreateCharacter : MonoBehaviour
         if (!File.Exists(characterFilePath))
             OpenCreateCharacterPanel();
         else    // 저장된 캐릭터 데이터가 있다면 씬 이동
-            SceneManager.LoadScene("Main");
+            sceneChanger.ChangeScene("Main");
     }
 
     public void OpenCreateCharacterPanel()

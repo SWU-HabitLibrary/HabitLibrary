@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BottonBar : MonoBehaviour
 {
     public GameObject SchedulePanel;    // 스케줄 패널
+    private SceneChange sceneChanger;   // 씬 전환 스크립트
+
+    public void Start()
+    {
+        // 한 번만 호출
+        sceneChanger = GameManager.instance.sceneChanger;
+    }
 
     public void MoveExplorationScene()
     {
         // 탐험 씬으로 이동하는 버튼
-
-        SceneManager.LoadScene("Exploration");
+        sceneChanger.ChangeScene("Exploration");
     }
 
     public void OpenSchedulePanel()
