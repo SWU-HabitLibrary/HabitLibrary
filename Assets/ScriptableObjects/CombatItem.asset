@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0eeb1ae038753be42bedbd9372241ab7, type: 3}
+  m_Name: CombatItem
+  m_EditorClassIdentifier: 
+  dataList:
+  - id: 3000
+    name: "\uC544\uC774\uD15C \uC774\uB984 1"
+    explanation: "\uC124\uBA85 1\r"
+  - id: 3001
+    name: "\uC544\uC774\uD15C \uC774\uB984 2"
+    explanation: "\uC124\uBA85 2\r"
+  - id: 3002
+    name: "\uC544\uC774\uD15C \uC774\uB984 3"
+    explanation: "\uC124\uBA85 3\r"
+  - id: 3003
+    name: "\uC544\uC774\uD15C \uC774\uB984 4"
+    explanation: "\uC124\uBA85 4\r"
+  - id: 3004
+    name: "\uC544\uC774\uD15C \uC774\uB984 5"
+    explanation: "\uC124\uBA85 5\r"
+  - id: 3005
+    name: "\uC544\uC774\uD15C \uC774\uB984 6"
+    explanation: "\uC124\uBA85 6\r"
+  - id: 3006
+    name: "\uC544\uC774\uD15C \uC774\uB984 7"
+    explanation: "\uC124\uBA85 7\r"
+  - id: 3007
+    name: "\uC544\uC774\uD15C \uC774\uB984 8"
+    explanation: "\uC124\uBA85 8\r"
+  - id: 3008
+    name: "\uC544\uC774\uD15C \uC774\uB984 9"
+    explanation: "\uC124\uBA85 9\r"
+  - id: 3009
+    name: "\uC544\uC774\uD15C \uC774\uB984 10"
+    explanation: "\uC124\uBA85 10\r"
+  - id: 3010
+    name: "\uC544\uC774\uD15C \uC774\uB984 11"
+    explanation: "\uC124\uBA85 11"
