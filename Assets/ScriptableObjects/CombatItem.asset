@@ -15,34 +15,45 @@ MonoBehaviour:
   dataList:
   - id: 3000
     name: "\uC544\uC774\uD15C \uC774\uB984 1"
-    explanation: "\uC124\uBA85 1\r"
+    explanation: "\uC124\uBA85 1"
+    price: 100
   - id: 3001
     name: "\uC544\uC774\uD15C \uC774\uB984 2"
-    explanation: "\uC124\uBA85 2\r"
+    explanation: "\uC124\uBA85 2"
+    price: 300
   - id: 3002
     name: "\uC544\uC774\uD15C \uC774\uB984 3"
-    explanation: "\uC124\uBA85 3\r"
+    explanation: "\uC124\uBA85 3"
+    price: 200
   - id: 3003
     name: "\uC544\uC774\uD15C \uC774\uB984 4"
-    explanation: "\uC124\uBA85 4\r"
+    explanation: "\uC124\uBA85 4"
+    price: 500
   - id: 3004
     name: "\uC544\uC774\uD15C \uC774\uB984 5"
-    explanation: "\uC124\uBA85 5\r"
+    explanation: "\uC124\uBA85 5"
+    price: 1000
   - id: 3005
     name: "\uC544\uC774\uD15C \uC774\uB984 6"
-    explanation: "\uC124\uBA85 6\r"
+    explanation: "\uC124\uBA85 6"
+    price: 800
   - id: 3006
     name: "\uC544\uC774\uD15C \uC774\uB984 7"
-    explanation: "\uC124\uBA85 7\r"
+    explanation: "\uC124\uBA85 7"
+    price: 450
   - id: 3007
     name: "\uC544\uC774\uD15C \uC774\uB984 8"
-    explanation: "\uC124\uBA85 8\r"
+    explanation: "\uC124\uBA85 8"
+    price: 230
   - id: 3008
     name: "\uC544\uC774\uD15C \uC774\uB984 9"
-    explanation: "\uC124\uBA85 9\r"
+    explanation: "\uC124\uBA85 9"
+    price: 650
   - id: 3009
     name: "\uC544\uC774\uD15C \uC774\uB984 10"
-    explanation: "\uC124\uBA85 10\r"
+    explanation: "\uC124\uBA85 10"
+    price: 300
   - id: 3010
     name: "\uC544\uC774\uD15C \uC774\uB984 11"
     explanation: "\uC124\uBA85 11"
+    price: 200

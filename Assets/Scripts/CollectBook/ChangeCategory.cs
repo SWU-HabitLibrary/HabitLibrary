@@ -28,6 +28,7 @@ public class ChangeCategory : MonoBehaviour
         }
 
         CollectBookCategories[0].SetActive(true);
+        GameObject.FindWithTag("CollectBookManager").GetComponent<CombatItemBook>().ShowCombatItem();
     }
 
     public void OpenEndingBook()
