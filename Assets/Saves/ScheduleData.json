@@ -1,6 +1,6 @@
 {
     "tempCount": 50,
-    "curCount": 5,
+    "curCount": 6,
     "dataList": [
         {
             "id": 202404171320,
@@ -38,10 +38,10 @@
             "isCompleted": false
         },
         {
-            "id": 0,
-            "content": "",
-            "date": "",
-            "time": "",
+            "id": 202405151150,
+            "content": "프종설 수업 듣기",
+            "date": "20240515",
+            "time": "1150",
             "isCompleted": false
         },
         {

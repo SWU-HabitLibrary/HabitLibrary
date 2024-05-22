@@ -11,7 +11,7 @@ public class CombatItemObject : ScriptableObject
 
     private static string spreadSheetAddress = "16PoscIM42RF6yYUzTUV820FSRDbwENgn5JS9fQDwrZQ";
     private static long spreadSheetWorksheet = 0;
-    private static string spreadSheetRange = "A2:C";
+    private static string spreadSheetRange = "A2:D";
     private static string objectName = "CombatItem";
 
     public List<CombatItem> dataList = new List<CombatItem>();
