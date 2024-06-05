@@ -24,10 +24,23 @@ public class CombatItemBook : MonoBehaviour
         ShowCombatItem();   // 전투용 아이템 인벤토리를 보여줌
     }
 
+/*    public void DisableChildren()
+    {
+        foreach (GameObject item in ItemContents)
+        {
+            // Get all children of the current item
+            foreach (Transform child in item.transform)
+            {
+                // Disable the child GameObject
+                child.gameObject.SetActive(false);
+            }
+        }
+    }
+*/
     public void ShowCombatItem()
     {
         // 전투용 아이템 인벤토리 개수만큼 생성하여 보여주는 함수
-
+        //DisableChildren();
         // 현재 인덱스부터 한 페이지의 최대 표시 수만큼 아이템을 표시
         for (int j = 0; j < ItemContents.Length; j++)
         {

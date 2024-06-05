@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public List<ItemData> combatItemDatas;  // 플레이어 전투용 아이템 데이터
     public List<ItemData> endingDatas;  // 플레이어 엔딩 데이터
 
+    public JSONManager jsonManager; // 데이터 저장 매니저
 
     public SceneChange sceneChanger;    // 씬 전환 스크립트
     public ScenarioObject scenarioObject;   // 시나리오 데이터
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
                 playerCharacter = new Character();
         }
 
+        jsonManager = new JSONManager();
         sceneChanger = this.GetComponent<SceneChange>();
         //UpdateGameDataFromSpreadSheet();
 

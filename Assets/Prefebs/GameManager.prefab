@@ -50,6 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatItemDatas: []
+  endingDatas: []
   sceneChanger: {fileID: 0}
   scenarioObject: {fileID: 11400000, guid: 494bb26faf8d12d418756f4cb317a206, type: 2}
   combatItemObject: {fileID: 11400000, guid: a9542bd3bb3ca10418355ae05d95d338, type: 2}
