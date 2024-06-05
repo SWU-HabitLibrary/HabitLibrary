@@ -1,72 +1,190 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using Unity.VisualScripting;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ScheduleManager : MonoBehaviour
 {
-    // ½ºÄÉÁÙÀ» »ı¼ºÇÏ´Â ½ºÅ©¸³Æ®
+    // ìŠ¤ì¼€ì¤„ì„ ìƒì„±í•˜ëŠ” ìŠ¤í¬ë¦½íŠ¸
 
-    public GameObject ScheduleContents; // ½ºÄÉÁÙ º¸µå
-    public GameObject ScheduleItem; // ½ºÄÉÁÙ ¾ÆÀÌÅÛ
-    public InputField InputSchedule;    // ½ºÄÉÁÙ ÀÔ·ÂÃ¢
+    public GameObject scheduleTitle;   // ìŠ¤ì¼€ì¤„ ì´ë¦„ì¹¸
+    public GameObject ScheduleContents; // ìŠ¤ì¼€ì¤„ ë³´ë“œ
+    public GameObject[] ScheduleItem; // ìŠ¤ì¼€ì¤„ ì•„ì´í…œ
+    public GameObject ScheduleAddItem; // ìŠ¤ì¼€ì¤„ ì¶”ê°€ ì•„ì´í…œ
+    public GameObject Btn_Add;  // ìŠ¤ì¼€ì¤„ ì¶”ê°€ ì•„ì´ì½˜
+    public ScrollRect scrollRect; // ìŠ¤í¬ë¡¤ ë·°ì˜ ScrollRect ì»´í¬ë„ŒíŠ¸
 
-    private static string fileName = "ScheduleData";   // ÀúÀå ÆÄÀÏ ÀÌ¸§
-    ScheduleData scheduleData;
+    private static string fileName = "ScheduleData";   // ì €ì¥ íŒŒì¼ ì´ë¦„
+    private static string fileName_saved = "ScheduleLog";   // ìŠ¤ì¼€ì¤„ ë¡œê·¸ ë°ì´í„° ì´ë¦„
+    private List<Schedule> dataList = new List<Schedule>();
 
     private void Start()
     {
-        //scheduleData = new ScheduleData();
-        UpdateScheduleData();   // ½ºÄÉÁÙ ¾÷µ¥ÀÌÆ®
+        UpdateScheduleTitle();
+        UpdateScheduleData();   // ìŠ¤ì¼€ì¤„ ì—…ë°ì´íŠ¸
     }
 
-
-
-    public void UpdateScheduleData()
+    private void UpdateScheduleTitle()
     {
-        // json¿¡ ÀúÀåµÈ ½ºÄÉÁÙ µ¥ÀÌÅÍ¸¦ ¾÷µ¥ÀÌÆ® ÇÏ´Â ÇÔ¼ö
+        // í˜„ì¬ ë‚ ì§œì— ë§ê²Œ ìŠ¤ì¼€ì¤„ ì´ë¦„ ì—…ë°ì´íŠ¸
+        DateTime curDate = DateTime.Now;    // í˜„ì¬ ë‚ ì§œ ë°ì´í„°
+        CultureInfo english = new CultureInfo("en-US"); // ì˜ì–´ ì •ë³´
 
-        scheduleData = this.gameObject.GetComponent<ScheduleJSON>().GetScheduleData(fileName);
+        string month = curDate.ToString("MMM", english); // í˜„ì¬ ì›”ì„ ì˜ì–´ë¡œ ê°€ì ¸ì˜´
+        string day = curDate.ToString("dd"); // í˜„ì¬ ì¼ì„ ê°€ì ¸ì˜´
+        string dayWithSuffix = GetDayWithSuffix(curDate.Day); // ì¼ì„ ì ‘ë¯¸ì‚¬ì™€ í•¨ê»˜ ê°€ì ¸ì˜´
 
-        Debug.Log(scheduleData.curCount);
+        scheduleTitle.GetComponent<Text>().text = "Today is    " + month + "    " + dayWithSuffix + " !    ( â€¢ á´— - ) âœ§";
+    }
 
-
-        for (int i = 0; i < scheduleData.curCount; i++)
+    private string GetDayWithSuffix(int day)
+    {
+        if (day >= 11 && day <= 13)
         {
-            Schedule curSchedule = scheduleData.dataList[i];
+            return day + "th";
+        }
+        switch (day % 10)
+        {
+            case 1:
+                return day + "st";
+            case 2:
+                return day + "nd";
+            case 3:
+                return day + "rd";
+            default:
+                return day + "th";
+        }
+    }
 
-            GameObject newScheduleItem = Instantiate(ScheduleItem, ScheduleContents.transform); // ºÎ¸ğ ÁöÁ¤ÇÏ¿© »ı¼º
-            newScheduleItem.transform.GetChild(0).GetChild(1).gameObject.GetComponent<Text>().text = curSchedule.content;    // ÅØ½ºÆ® µî·Ï
+    private void ClearChildObjects()
+    {
+        // ScheduleContentsì˜ ëª¨ë“  ìì‹ ì˜¤ë¸Œì íŠ¸ ì‚­ì œ
+        foreach (Transform child in ScheduleContents.transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void AdjustBottom()
+    {
+        // ìŠ¤ì¼€ì¤„ contentsì˜ bottom(ìŠ¤í¬ë¡¤ë·° bottom í¬ê¸° ì¡°ì ˆ í•¨ìˆ˜)
+        RectTransform contentsRectTransform = ScheduleContents.GetComponent<RectTransform>();
+        float childHeight = 0f;
+        float childPadding = 30f;
+
+        // ìì‹ ì˜¤ë¸Œì íŠ¸ì˜ ë†’ì´ ê°€ì ¸ì˜¤ê¸°
+        if (ScheduleContents.transform.childCount > 0)
+        {
+            childHeight = ScheduleContents.transform.GetChild(0).GetComponent<RectTransform>().rect.height + childPadding;
         }
 
+        int childCount = ScheduleContents.transform.childCount; // ìì‹ ì˜¤ë¸Œì íŠ¸ ê°œìˆ˜
+        contentsRectTransform.sizeDelta = new Vector2(contentsRectTransform.sizeDelta.x, childHeight * childCount);
     }
 
-    public void EnterSchedule()
+    private void UpdateScheduleData()
     {
-        // ½ºÄÉÁÙÀ» µî·Ï ¹öÆ°À» ´©¸£¸é ½ºÄÉÁÙÀ» Ãß°¡ÇÏ´Â ÇÔ¼ö
+        // jsonì— ì €ì¥ëœ ìŠ¤ì¼€ì¤„ ë°ì´í„°ë¥¼ ì—…ë°ì´íŠ¸ í•˜ëŠ” í•¨ìˆ˜
 
-        // ½ºÄÉÁÙ µ¥ÀÌÅÍ¸¦ °¡Á®¿È
-        string content = InputSchedule.text;    // ÀÔ·ÂÇÑ ½ºÄÉÁÙ ³»¿ë
-        DateTime curDate = DateTime.Now;    // ÇöÀç ³¯Â¥ µ¥ÀÌÅÍ
-        string date = curDate.ToString("yyyyMMdd"); // ³¯Â¥
-        string time = curDate.ToString("HHmm");   // ½Ã°£
-        string id = date + time;    // ½ºÄÉÁÙ id
-        bool isCompleted = false;   // ¿Ï·á ¿©ºÎ
+        ClearChildObjects();
+        dataList = GameManager.instance.jsonManager.LoadDataList<Schedule>(fileName);
 
-        // ½ºÄÉÁÙ ¾ÆÀÌÅÛ Ãß°¡
-        Schedule newSchedule = new Schedule(long.Parse(id), content, date, time, isCompleted);
-        scheduleData.dataList[scheduleData.curCount] = newSchedule;  // Ãß°¡
-        Debug.Log("Ãß°¡µÊ" + scheduleData.dataList[scheduleData.curCount].content);
-        scheduleData.curCount++;
+        if (dataList.Count < 0)
+            return;
 
-        GameObject newScheduleItem = Instantiate(ScheduleItem, ScheduleContents.transform); // ºÎ¸ğ ÁöÁ¤ÇÏ¿© »ı¼º
-        newScheduleItem.transform.GetChild(0).GetChild(1).gameObject.GetComponent<Text>().text = newSchedule.content;    // ÅØ½ºÆ® µî·Ï
+        for (int i = 0; i < dataList.Count; i++)
+        {
+            Schedule curSchedule = dataList[i];
+            int randomNumber = UnityEngine.Random.Range(0, ScheduleItem.Length);
 
-        this.GetComponent<ScheduleJSON>().DataSaveText(fileName, scheduleData);
+            GameObject newScheduleItem = Instantiate(ScheduleItem[randomNumber], ScheduleContents.transform); // ë¶€ëª¨ ì§€ì •í•˜ì—¬ ìƒì„±
+            newScheduleItem.transform.GetChild(0).gameObject.GetComponent<Text>().text = curSchedule.content;    // í…ìŠ¤íŠ¸ ë“±ë¡
+            newScheduleItem.GetComponent<ScheduleItem>().scheduleId = curSchedule.id;
+        }
 
-        // 
-        InputSchedule.text = "";    //ÅØ½ºÆ® ÃÊ±âÈ­
+        AdjustBottom();
+    }
+
+    private void TouchWriteButton()
+    {
+        // ìŠ¤ì¼€ì¤„ ì‘ì„±ì°½ ë²„íŠ¼ í•¨ìˆ˜
+
+        GameObject newScheduleItem = Instantiate(ScheduleAddItem, ScheduleContents.transform); // ë¶€ëª¨ ì§€ì •í•˜ì—¬ ìƒì„±
+        newScheduleItem.transform.SetAsFirstSibling();  // ì²«ë²ˆì§¸ ìì‹ ì˜¤ë¸Œì íŠ¸ë¡œ ìœ„ì¹˜ ë³€ê²½
+        newScheduleItem.transform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => TouchAddOfWriteButton(newScheduleItem));    // ìŠ¤ì¼€ì¤„ ë“±ë¡ ë²„íŠ¼ ì´ë²¤íŠ¸ ì¶”ê°€
+        newScheduleItem.transform.GetChild(2).GetComponent<Button>().onClick.AddListener(() => TouchCancleOfWriteButton(newScheduleItem)); // ìŠ¤ì¼€ì¤„ ë“±ë¡ ì·¨ì†Œ ë²„íŠ¼ ì´ë²¤íŠ¸ ì¶”ê°€
+
+        AdjustBottom(); // ìŠ¤í¬ë¡¤ë·° bottom í¬ê¸° ì¡°ì ˆ
+        ScrollToTop(); // ìŠ¤í¬ë¡¤ ë·°ì˜ ì‹œì ì„ ê°€ì¥ ìœ„ë¡œ ì´ë™
+    }
+
+    private void TouchAddOfWriteButton(GameObject _newScheduleItem)
+    {
+        // ìŠ¤ì¼€ì¤„ ë“±ë¡ ë²„íŠ¼ í•¨ìˆ˜
+
+        string content = _newScheduleItem.transform.GetChild(0).GetComponent<InputField>().text; // ì…ë ¥í•œ ìŠ¤ì¼€ì¤„ ë‚´ìš©
+        DateTime curDate = DateTime.Now;    // í˜„ì¬ ë‚ ì§œ ë°ì´í„°
+        string date = curDate.ToString("yyyyMMdd"); // ë‚ ì§œ
+        string time = curDate.ToString("HHmmss");   // ì‹œê°„
+        string id = date + time;    // ìŠ¤ì¼€ì¤„ id
+        ProgressType progressType = ProgressType.InProgress;   // ì™„ë£Œ ì—¬ë¶€
+
+
+
+        // ìŠ¤ì¼€ì¤„ ì•„ì´í…œ ì¶”ê°€
+        Schedule newSchedule = new Schedule(long.Parse(id), content, date, time, progressType);
+        dataList.Add(newSchedule);  // json ì¶”ê°€
+        GameManager.instance.jsonManager.SaveDataList(fileName, dataList);  // ì €ì¥
+
+        // ì¸ê²Œì„ ì¶”ê°€
+        int randomNumber = UnityEngine.Random.Range(0, ScheduleItem.Length);
+        GameObject newScheduleItem = Instantiate(ScheduleItem[randomNumber], ScheduleContents.transform); // ë¶€ëª¨ ì§€ì •í•˜ì—¬ ìƒì„±
+        newScheduleItem.GetComponent<ScheduleItem>().scheduleId = long.Parse(id);
+        newScheduleItem.transform.GetChild(0).gameObject.GetComponent<Text>().text = content;    // í…ìŠ¤íŠ¸ ë“±ë¡
+
+        Destroy(_newScheduleItem);
+    }
+
+    private void TouchCancleOfWriteButton(GameObject newSchedule)
+    {
+        // ìŠ¤ì¼€ì¤„ ë“±ë¡ ì·¨ì†Œ ë²„íŠ¼ í•¨ìˆ˜
+        Destroy(newSchedule);
+        AdjustBottom();
+    }
+
+    public void SavedToScheduleLog(long scheduleId, ProgressType progressType)
+    {
+        // ì™„ë£Œëœ ìŠ¤ì¼€ì¤„ì„ ë¡œê·¸ ë°ì´í„°ë¡œ ì €ì¥í•˜ëŠ” í•¨ìˆ˜
+
+        // ë¡œê·¸ ë°ì´í„°ì— ì €ì¥
+        List<Schedule> savedDataList = GameManager.instance.jsonManager.LoadDataList<Schedule>(fileName_saved);
+        Schedule scheduleItem = dataList.FirstOrDefault(data => data.id == scheduleId);
+        scheduleItem.progressType = progressType;           // ì§„í–‰ ìƒíƒœ ë³€ê²½
+        savedDataList.Add(scheduleItem);                    // ë¡œê·¸ ë°ì´í„° ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
+        GameManager.instance.jsonManager.SaveDataList(fileName_saved, savedDataList);  // ë¡œê·¸ ë°ì´í„° ë¦¬ìŠ¤íŠ¸ ì €ì¥
+
+        // ê¸°ì¡´ ë°ì´í„°ì—ì„œ ì‚­ì œ
+        for (int i = 0; i < dataList.Count; i++)
+        {
+            if (dataList[i].id == scheduleId)
+            {
+                dataList.RemoveAt(i);
+                break;
+            }
+        }
+        GameManager.instance.jsonManager.SaveDataList(fileName, dataList);  // ì €ì¥
+        AdjustBottom();
+    }
+
+    private void ScrollToTop()
+    {
+        // ìŠ¤í¬ë¡¤ë·°ì˜ ì‹œì ì„ ê°€ì¥ ìœ„ë¡œ ì´ë™
+        scrollRect.verticalNormalizedPosition = 1f;
     }
 }
