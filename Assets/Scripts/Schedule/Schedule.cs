@@ -17,17 +17,19 @@ public class Schedule
     public Schedule()
     {
         id = 0;
-        content = date = time = "";
+        content = "";
+        date = "";
+        time = "";
         progressType = ProgressType.InProgress;
     }
 
-    public Schedule(long _id,  string _content, string _date, string _time, ProgressType _progressType)
+    public Schedule(long id,  string content, string date, string time, ProgressType progressType)
     {
-        id = _id;   
-        content = _content;
-        date = _date;
-        time = _time;
-        progressType = _progressType;        
+        this.id = id;
+        this.content = content;
+        this.date = date;
+        this.time = time;
+        this.progressType = progressType;
     }
 }
 public enum ProgressType

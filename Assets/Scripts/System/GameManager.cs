@@ -1,63 +1,74 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     // 게임 데이터를 관리하는 싱글톤 패턴
-    public static GameManager instance;
+    public static GameManager Instance { get; private set; }
 
     [Header("[Game Data]")]
-    public Character playerCharacter;   // 플레이어 캐릭터 스텟
-    public List<ItemData> combatItemDatas;  // 플레이어 전투용 아이템 데이터
-    public List<ItemData> endingDatas;  // 플레이어 엔딩 데이터
-
     public JSONManager jsonManager; // 데이터 저장 매니저
-
     public SceneChange sceneChanger;    // 씬 전환 스크립트
     public ScenarioObject scenarioObject;   // 시나리오 데이터
     public CombatItemObject combatItemObject;   // 전투용 아이템 데이터
     public EndingObject endingObject;   // 엔딩 도감 데이터
 
+    public List<Character> CharacterDatas { get; set; }
+    public List<ItemData> CombatItemDatas { get; set; }
+    public List<ItemData> EndingDatas { get; set; }
+
+    [Header("[Player Data]")]
+    public Character curCharacter;
+
+
     void Awake()
     {
-        // 게임 시작과 동시에 싱글톤 구성
+        InitializeSingleton();
+        InitializeGameData();
+    }
 
-        if (instance)     //싱글톤 변수 instance가 이미 있다면
+    private void InitializeSingleton()
+    {
+        if (Instance != null)
         {
-            DestroyImmediate(gameObject);   //삭제
+            Destroy(gameObject);
             return;
         }
 
-        instance = this;    //유일한 인스턴스
-        DontDestroyOnLoad(gameObject);  //씬이 바뀌어도 계속 유지시킴
-
-        if (playerCharacter == null)
-        {
-            string characterFilePath = Application.dataPath + "/Saves/character.json";
-            // 저장된 캐릭터 데이터가 있다면 가져옴
-            if (File.Exists(characterFilePath))
-                playerCharacter = this.GetComponent<CharacterStateJSON>().LoadToJson();
-            else
-                playerCharacter = new Character();
-        }
-
-        jsonManager = new JSONManager();
-        sceneChanger = this.GetComponent<SceneChange>();
-        //UpdateGameDataFromSpreadSheet();
-
-        combatItemDatas = this.GetComponent<ItemDataJSON>().UpdateItemData("CombatItemData");
-        endingDatas = this.GetComponent<ItemDataJSON>().UpdateItemData("EndingData");
-
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
-    public static GameManager GetGameManager()
+    private void InitializeGameData()
     {
-        return instance;
+        jsonManager = new JSONManager();
+        sceneChanger = GetComponent<SceneChange>();
+        //UpdateGameDataFromSpreadSheet();
+
+        LoadOrCreatePlayerCharacter();
+        LoadItemData();
+    }
+
+    private void LoadOrCreatePlayerCharacter()
+    {
+        if (jsonManager.CheckDataExists(Constants.CharacterData))
+        {
+            CharacterDatas = jsonManager.LoadDataList<Character>(Constants.CharacterData);
+            curCharacter = CharacterDatas[CharacterDatas.Count - 1];
+        }
+        else
+        {
+            CharacterDatas = new List<Character>();
+            curCharacter = new Character();
+        }
+    }
+
+    private void LoadItemData()
+    {
+        CombatItemDatas = jsonManager.LoadDataList<ItemData>(Constants.CombatItemData);
+        EndingDatas = jsonManager.LoadDataList<ItemData>(Constants.EndingData);
     }
 
     public void UpdateGameDataFromSpreadSheet()

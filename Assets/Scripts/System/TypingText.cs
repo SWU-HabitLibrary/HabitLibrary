@@ -9,7 +9,7 @@ public class TypingText : MonoBehaviour
 {
 
     public TMP_Text dialogueText;
-    public Button nextBtn;  // 다음 대화로 넘어가는 버튼
+    public Button nextBtn;                      // 다음 대화로 넘어가는 버튼
     public List<Scenario> dialogues;
 
     private int curIndex = 0;
@@ -18,34 +18,44 @@ public class TypingText : MonoBehaviour
     public void Start()
     {
         // 다음 대화로 넘어가는 버튼에 클릭 이벤트 추가
-        nextBtn.onClick.AddListener(PrintDialogue);
+        nextBtn.onClick.AddListener(OnNextButtonClick);
 
-        dialogues = GameManager.instance.scenarioObject.dataList;
+        dialogues = GameManager.Instance.scenarioObject.dataList;
+    }
+    private void OnNextButtonClick()
+    {
+        PrintDialogue();
     }
 
     public void PrintDialogue()
     {
-        if (curIndex < dialogues.Count)    // 대화가 모두 출력되었는지 확인
+        if (curIndex < dialogues.Count)
         {
-            curIndex++;
             if (typingCoroutine != null)
             {
                 // 타이핑 중이라면 즉시 완료하고 다음 대사로 넘어감
-                StopCoroutine(typingCoroutine);
-                dialogueText.text = dialogues[curIndex - 1].content;
+                StopTypingCoroutine();
             }
             else
             {
                 // 타이핑 중이 아니라면 다음 대사를 타이핑 효과와 함께 출력
-                typingCoroutine = StartCoroutine(Typing(dialogues[curIndex - 1].content));
+                typingCoroutine = StartCoroutine(Typing(dialogues[curIndex].content));
+                curIndex++;
             }
         }
+    }
+
+    private void StopTypingCoroutine()
+    {
+        StopCoroutine(typingCoroutine);
+        dialogueText.text = dialogues[curIndex].content;
+        typingCoroutine = null;
+        curIndex++;
     }
 
     IEnumerator Typing(string dialogue)    
     {
         // 타이핑 효과 함수
-
         dialogueText.text = ""; // 텍스트 초기화
 
         foreach (char letter in dialogue.ToCharArray())

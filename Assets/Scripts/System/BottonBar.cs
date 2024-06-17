@@ -8,10 +8,10 @@ public class BottonBar : MonoBehaviour
     public GameObject SchedulePanel;    // 스케줄 패널
     private SceneChange sceneChanger;   // 씬 전환 스크립트
 
-    public void Start()
+    private void Start()
     {
-        // 한 번만 호출
-        sceneChanger = GameManager.instance.sceneChanger;
+        // 씬 전환 스크립트 연결
+        sceneChanger = GameManager.Instance.sceneChanger;
     }
 
     public void MoveExplorationScene()
