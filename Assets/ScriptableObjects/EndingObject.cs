@@ -19,10 +19,10 @@ public class EndingObject : ScriptableObject
     {
         // Ending 스크립터블 오브젝트 데이터를 업데이트하는 함수
 
-        GameManager.instance.GetComponent<ScriptableObjectManager>().GetScriptableObjectToObjectList<Ending>(spreadSheetAddress, spreadSheetRange, spreadSheetWorksheet, (_loadedDataList) =>
+        GameManager.Instance.GetComponent<ScriptableObjectManager>().GetScriptableObjectToObjectList<Ending>(spreadSheetAddress, spreadSheetRange, spreadSheetWorksheet, (_loadedDataList) =>
         {
             dataList = _loadedDataList;
-            GameManager.instance.GetComponent<ScriptableObjectManager>().SaveScriptableObjectAtPath(objectName);    // 변동사항 저장
+            GameManager.Instance.GetComponent<ScriptableObjectManager>().SaveScriptableObjectAtPath(objectName);    // 변동사항 저장
             onUpdateComplete?.Invoke(); //onUpdateComplete 콜백 호출
         });
     }
@@ -31,6 +31,6 @@ public class EndingObject : ScriptableObject
     {
         // Ending 스크립터블 오브젝트를 삭제하고 재생성하는 함수
 
-        GameManager.instance.GetComponent<ScriptableObjectManager>().InitializeScriptableObject<EndingObject>(CreateInstance<EndingObject>(), objectName);
+        GameManager.Instance.GetComponent<ScriptableObjectManager>().InitializeScriptableObject<EndingObject>(CreateInstance<EndingObject>(), objectName);
     }
 }

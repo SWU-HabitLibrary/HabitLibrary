@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class MovingStars : MonoBehaviour
 {
-    // 시작 화면에서 별이 떨어지는 애니메이션
+    // 타이틀 화면 애니메이션 스크립트
 
     public GameObject[] stars; // 별똥별 배열
     private Vector2[] initialPositions; // 별똥별 초기 위치 저장 배열
@@ -30,10 +30,10 @@ public class MovingStars : MonoBehaviour
             stars[i].SetActive(false);
         }
 
-        StartCoroutine(ActivateAndMoveImages());
+        StartCoroutine(ActivateAndMoveStars());
     }
 
-    private IEnumerator ActivateAndMoveImages()
+    private IEnumerator ActivateAndMoveStars()
     {
         while (true)
         {
@@ -42,7 +42,7 @@ public class MovingStars : MonoBehaviour
                 if (!star.activeInHierarchy)        // 활성화 되어있지 않으면
                 {
                     star.SetActive(true);           // 별똥별 활성화
-                    StartCoroutine(MoveImage(star));    // 별똥별 좌표 이동
+                    StartCoroutine(MoveStar(star));    // 별똥별 좌표 이동
                     yield return new WaitForSeconds(0.1f); 
                 }
             }
@@ -51,7 +51,7 @@ public class MovingStars : MonoBehaviour
         }
     }
 
-    private IEnumerator MoveImage(GameObject star)
+    private IEnumerator MoveStar(GameObject star)
     {
         RectTransform rectTransform = star.GetComponent<RectTransform>();
         int index = System.Array.IndexOf(stars, star);
@@ -62,12 +62,17 @@ public class MovingStars : MonoBehaviour
 
             if (rectTransform.anchoredPosition.x <= resetX || rectTransform.anchoredPosition.y <= resetY)
             {
-                rectTransform.anchoredPosition = initialPositions[index];
-                star.SetActive(false);
+                ResetStarPosition(rectTransform, index);
                 break;
             }
 
             yield return null; // 매 프레임마다 이동
         }
+    }
+
+    private void ResetStarPosition(RectTransform rectTransform, int index)
+    {
+        rectTransform.anchoredPosition = initialPositions[index];
+        stars[index].SetActive(false);
     }
 }

@@ -9,8 +9,8 @@ public class ScriptableObjectManager : MonoBehaviour
     // 스크립터블 오브젝트 관리 클래스
 
 
-    private static string objectAddress_start = "Assets/ScriptableObjects/";
-    private static string objectAddress_end = ".asset";
+    private const string objectAddress_start = "Assets/ScriptableObjects/";
+    private const string objectAddress_end = ".asset";
 
 
     public void InitializeScriptableObject<T>(UnityEngine.Object asset, string objectName)

@@ -12,12 +12,13 @@ public class ItemData
 
     public ItemData()
     {
-        id = count = 0;
+        id = 0;
+        count = 0;
     }
 
-    public ItemData(int _id, int _count)
+    public ItemData(int id, int count)
     {
-        id = _id;
-        count = _count;
+        this.id = id;
+        this.count = count;
     }
 }
